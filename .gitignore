@@ -1,0 +1,26 @@
+# cpp #
+*.d
+*.slo
+*.lo
+*.o
+*.obj
+*.gch
+*.pch
+*.so
+*.dylib
+*.mod
+*.smod
+*.lai
+*.la
+*.a
+*.lib
+*.out
+*.app
+
+# xmake #
+.xmake/
+build/
+
+# other #
+TODO.md
+release/
