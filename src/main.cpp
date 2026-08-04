@@ -17,6 +17,17 @@ int main(int argc, char **argv) {
 
     CLI11_PARSE(csmt, argc, argv);
 
+    if(!*run && !*add && !*rm) {
+        std::cerr << ansi::BOLD_RED << "error: " << ansi::RESET
+                  << "unknown command, type csmt --help\n";
+        std::exit(1);
+    }
+    if(script_name == "") {
+        std::cerr << ansi::BOLD_RED << "error: " << ansi::RESET
+                  << "script name is empty\n";
+        std::exit(1);
+    }
+
     fs::path scripts_full_path =
         !dirs::scripts_dir.empty() && dirs::scripts_dir[0] == '~'
             ? fs::path(std::getenv("HOME")) / dirs::scripts_dir.substr(2)
