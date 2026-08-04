@@ -17,9 +17,15 @@ int main(int argc, char **argv) {
 
     CLI11_PARSE(csmt, argc, argv);
 
-    if(!fs::is_regular_file(script_name)) {
+    fs::path scripts_full_path =
+        !dirs::scripts_dir.empty() && dirs::scripts_dir[0] == '~'
+            ? fs::path(std::getenv("HOME")) / dirs::scripts_dir.substr(2)
+            : fs::path(dirs::scripts_dir);
+    auto script_full_name = scripts_full_path / script_name;
+
+    if(!fs::is_regular_file(script_full_name)) {
         std::cerr << ansi::BOLD_RED << "error: " << ansi::RESET
-                  << script_name << " isn't a file or doesn't exist\n";
+                  << script_full_name << " isn't a file or doesn't exist\n";
         std::exit(1);
     }
 
@@ -30,10 +36,10 @@ int main(int argc, char **argv) {
     std::string command;
     if(*run) {
         if(script_ext == ".sh" || script_ext == ".bin") {
-            command = "./" + script_name;
+            command = dirs::scripts_dir + script_name;
             system(command.c_str());
         } else if(script_ext == ".py") {
-            command = "python3 " + script_name;
+            command = "python3 " + dirs::scripts_dir + script_name;
             system(command.c_str());
         } else {
             std::cerr << ansi::BOLD_RED << "error: " << ansi::RESET
