@@ -23,18 +23,18 @@ int main(int argc, char **argv) {
             : fs::path(dirs::scripts_dir);
     auto script_full_name = scripts_full_path / script_name;
 
-    if(!fs::is_regular_file(script_full_name)) {
-        std::cerr << ansi::BOLD_RED << "error: " << ansi::RESET
-                  << script_full_name << " isn't a file or doesn't exist\n";
-        std::exit(1);
-    }
-
     auto pos = script_name.find('.');
     script_ext = script_name.substr(pos);
     if(pos == std::string::npos) script_ext = ".bin";
 
     std::string command;
     if(*run) {
+        if(!fs::is_regular_file(script_full_name)) {
+            std::cerr << ansi::BOLD_RED << "error: " << ansi::RESET
+                      << script_full_name << " isn't a file or doesn't exist\n";
+            std::exit(1);
+        }
+
         if(script_ext == ".sh" || script_ext == ".bin") {
             command = dirs::scripts_dir + script_name;
             system(command.c_str());
@@ -47,9 +47,11 @@ int main(int argc, char **argv) {
             std::exit(1);
         }
     } else if (*add) {
-        std::cout << "you selected 'add' and typed " << script_name << "\n";
+        command = "chmod +x " + script_name;
+        system(command.c_str());
+        fs::rename(script_name, script_full_name);
     } else if (*rm) {
-        std::cout << "you selected 'rm' and typed " << script_name << "\n";
+        fs::remove(script_full_name);
     }
 
     std::cout << "success\n";
